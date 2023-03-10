@@ -8,6 +8,7 @@ import {
   HerokuTeamApp,
   HerokuAppAddon,
 } from './types/herokuTypes';
+import { HerokuClientError } from './types';
 import {
   IntegrationProviderAPIError,
   IntegrationProviderAuthorizationError,
@@ -23,14 +24,17 @@ export function routeToEndpoint(route: string): string {
 
 export function createRequestError(
   endpoint: string,
-  err: any,
+  err: HerokuClientError,
 ): IntegrationProviderAPIError {
   const { statusCode: status } = err;
   const statusText = err.body?.message || 'Heroku API request error received';
 
   if (status === 403) {
     return new IntegrationProviderAuthorizationError({
-      cause: err,
+      cause: {
+        name: err.body.id,
+        message: err.body.message,
+      },
       endpoint,
       status,
       statusText,

@@ -1,0 +1,6 @@
+
+---
+sourceId: managed:heroku
+integrationDefinitionId: '${integration_definition_id}'
+questions:
+  []

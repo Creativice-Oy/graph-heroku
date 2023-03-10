@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Opaque } from 'type-fest';
 
+export type HerokuAppError = Opaque<any, 'HerokuError'>;
+
 export type HerokuEnterpriseAccount = Opaque<any, ''>;
 
 export type HerokuUser = Opaque<any, 'HerokuUser'>;

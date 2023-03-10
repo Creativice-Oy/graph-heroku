@@ -2,7 +2,7 @@ import {
   IntegrationStep,
   createIntegrationEntity,
   Entity,
-  getTime,
+  parseTimePropertyValue,
 } from '@jupiterone/integration-sdk-core';
 import { HerokuClient } from '../../heroku';
 import {
@@ -10,7 +10,7 @@ import {
   ACCOUNT_TYPE,
 } from '../fetch-enterprise-accounts';
 import { HerokuIntegrationConfig } from '../../types';
-
+import { HerokuEnterpriseAccountMember } from '../../types/herokuTypes';
 export const STEP_ID = 'fetch-account-members';
 export const ACCOUNT_MEMBER_TYPE = 'heroku_account_member';
 
@@ -36,7 +36,9 @@ const step: IntegrationStep<HerokuIntegrationConfig> = {
       );
 
       await jobState.addEntities(
-        members.map((member) => createAccountMemberEntity(member, account.id)),
+        members.map((member) =>
+          createAccountMemberEntity(member, account.id as string),
+        ),
       );
     });
   },
@@ -44,7 +46,10 @@ const step: IntegrationStep<HerokuIntegrationConfig> = {
 
 export default step;
 
-export function createAccountMemberEntity(member, accountId): Entity {
+export function createAccountMemberEntity(
+  member: HerokuEnterpriseAccountMember,
+  accountId: string,
+): Entity {
   return createIntegrationEntity({
     entityData: {
       source: member,
@@ -53,8 +58,8 @@ export function createAccountMemberEntity(member, accountId): Entity {
         _type: ACCOUNT_MEMBER_TYPE,
         _class: 'User',
         id: member.user.id,
-        createdOn: getTime(member.created_at),
-        updatedOn: getTime(member.updated_at),
+        createdOn: parseTimePropertyValue(member.created_at),
+        updatedOn: parseTimePropertyValue(member.updated_at),
         enterpriseAccountId: accountId,
         username: member.user.email,
         name: member.user.email,

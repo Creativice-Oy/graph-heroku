@@ -15,6 +15,7 @@ import {
 } from '../fetch-enterprise-account-teams';
 import { HerokuClient } from '../../heroku';
 import { HerokuIntegrationConfig } from '../../types';
+import { HerokuTeamMember } from '../../types/herokuTypes';
 
 const step: IntegrationStep<HerokuIntegrationConfig> = {
   id: 'build-team-to-member-relationships',
@@ -100,7 +101,7 @@ async function createTeamHasUserRelationships({
   jobState,
 }: {
   userIdMap: Map<string, Entity>;
-  teamMembers: any[];
+  teamMembers: HerokuTeamMember[];
   teamEntity: Entity;
   jobState: JobState;
 }) {

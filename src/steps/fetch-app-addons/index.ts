@@ -2,7 +2,7 @@ import {
   IntegrationStep,
   createIntegrationEntity,
   Entity,
-  getTime,
+  parseTimePropertyValue,
 } from '@jupiterone/integration-sdk-core';
 import { HerokuClient } from '../../heroku';
 
@@ -11,6 +11,7 @@ import {
   APPLICATION_TYPE,
 } from '../fetch-team-apps';
 import { HerokuIntegrationConfig } from '../../types';
+import { HerokuAppAddon } from '../../types/herokuTypes';
 
 export const STEP_ID = 'fetch-app-addons';
 export const ADDON_TYPE = 'heroku_addon';
@@ -44,7 +45,9 @@ const step: IntegrationStep<HerokuIntegrationConfig> = {
         );
 
         await jobState.addEntities(
-          addons.map((addon) => createAddonEntity(addon, application.id)),
+          addons.map((addon) =>
+            createAddonEntity(addon, application.id as string),
+          ),
         );
       },
     );
@@ -53,7 +56,10 @@ const step: IntegrationStep<HerokuIntegrationConfig> = {
 
 export default step;
 
-export function createAddonEntity(addon, applicationId): Entity {
+export function createAddonEntity(
+  addon: HerokuAppAddon,
+  applicationId: string,
+): Entity {
   return createIntegrationEntity({
     entityData: {
       source: addon,
@@ -62,8 +68,8 @@ export function createAddonEntity(addon, applicationId): Entity {
         _type: ADDON_TYPE,
         _class: 'Service',
         id: addon.id,
-        createdOn: getTime(addon.created_at),
-        updatedOn: getTime(addon.updated_at),
+        createdOn: parseTimePropertyValue(addon.created_at),
+        updatedOn: parseTimePropertyValue(addon.updated_at),
         applicationId: applicationId,
         category: ['platform'],
         endpoints: [addon.web_url],

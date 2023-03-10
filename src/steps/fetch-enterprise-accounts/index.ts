@@ -2,7 +2,7 @@ import {
   IntegrationStep,
   createIntegrationEntity,
   Entity,
-  getTime,
+  parseTimePropertyValue,
 } from '@jupiterone/integration-sdk-core';
 import { HerokuClient } from '../../heroku';
 import { HerokuIntegrationConfig } from '../../types';
@@ -50,8 +50,8 @@ export function createAccountEntity(
         _type: ACCOUNT_TYPE,
         _class: 'Account',
         id: enterpriseAccount.id,
-        createdOn: getTime(enterpriseAccount.created_at),
-        updatedOn: getTime(enterpriseAccount.updated_at),
+        createdOn: parseTimePropertyValue(enterpriseAccount.created_at),
+        updatedOn: parseTimePropertyValue(enterpriseAccount.updated_at),
       },
     },
   });

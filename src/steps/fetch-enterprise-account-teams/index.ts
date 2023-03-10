@@ -2,7 +2,7 @@ import {
   IntegrationStep,
   createIntegrationEntity,
   Entity,
-  getTime,
+  parseTimePropertyValue,
 } from '@jupiterone/integration-sdk-core';
 import { HerokuClient } from '../../heroku';
 import {
@@ -10,6 +10,7 @@ import {
   ACCOUNT_TYPE,
 } from '../fetch-enterprise-accounts';
 import { HerokuIntegrationConfig } from '../../types';
+import { HerokuEnterpriseAccountTeam } from '../../types/herokuTypes';
 
 export const TEAM_TYPE = 'heroku_team';
 export const STEP_ID = 'fetch-teams';
@@ -35,7 +36,7 @@ const step: IntegrationStep<HerokuIntegrationConfig> = {
         account.id as string,
       );
       await jobState.addEntities(
-        teams.map((team) => createTeamEntity(team, account.id)),
+        teams.map((team) => createTeamEntity(team, account.id as string)),
       );
     });
   },
@@ -43,7 +44,10 @@ const step: IntegrationStep<HerokuIntegrationConfig> = {
 
 export default step;
 
-export function createTeamEntity(team, accountId): Entity {
+export function createTeamEntity(
+  team: HerokuEnterpriseAccountTeam,
+  accountId: string,
+): Entity {
   return createIntegrationEntity({
     entityData: {
       source: team,
@@ -51,8 +55,8 @@ export function createTeamEntity(team, accountId): Entity {
         _key: team.id,
         _type: TEAM_TYPE,
         _class: 'Team',
-        createdOn: getTime(team.created_at),
-        updatedOn: getTime(team.updated_at),
+        createdOn: parseTimePropertyValue(team.created_at),
+        updatedOn: parseTimePropertyValue(team.updated_at),
         enterpriseAccountId: accountId,
       },
     },
